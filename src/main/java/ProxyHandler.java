@@ -60,12 +60,17 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
 
     @Override
     public ProxyResponseReceivedAction handleResponseReceived(InterceptedResponse interceptedResponse) {
+        Annotations a = interceptedResponse.annotations();
         for (Rule rule : this.rules) {
             if (rule.getLocation().equals("Response") && rule.checkRule(interceptedResponse)) {
-                return ProxyResponseReceivedAction.continueWith(interceptedResponse, interceptedResponse.annotations().withHighlightColor(rule.getColor()));
+                if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note"))
+                    a = rule.annotateResponse(a);
+                else if (rule.getAction().equals("Drop Req/Res")) {
+                    return ProxyResponseReceivedAction.drop();
+                }
             }
         }
-        return ProxyResponseReceivedAction.continueWith(interceptedResponse);
+        return ProxyResponseReceivedAction.continueWith(interceptedResponse, a);
     }
 
     @Override

@@ -38,6 +38,16 @@ public class Rule {
         return a;
     }
 
+    public Annotations annotateResponse(Annotations a){
+        if(this.action.equals("Highlight")){
+            a = a.withHighlightColor(this.color);
+        }
+        else if(this.action.equals("Add Note")){
+            a = a.withNotes(this.note);
+        }
+        return a;
+    }
+
     //Accessors
     public String getAction(){
         return this.action;
