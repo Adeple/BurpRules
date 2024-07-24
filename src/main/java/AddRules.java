@@ -133,7 +133,7 @@ public class AddRules implements ActionListener {
                 this.noteField.setVisible(true);
                 this.noteLabel.setVisible(true);
             }
-            else{
+            else if (this.action.getSelectedIndex() == 2){
                 this.colorSelect.setVisible(false);
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(false);

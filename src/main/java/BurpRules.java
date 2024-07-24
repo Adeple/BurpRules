@@ -27,7 +27,7 @@ public class BurpRules extends AddRules implements BurpExtension {
             api.userInterface().registerSuiteTab("Burp Rules", a.getPanel());
 
             //Load Message
-            print("Burp Rules Manager v0.1\nBy Andrew Palmer\n\n\n\nLoaded Successfully", api);
+            print("Burp Rules Manager v1.0\nBy Andrew Palmer\n\n\n\nLoaded Successfully", api);
   }
 
     //Simplified print function

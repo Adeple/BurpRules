@@ -45,7 +45,11 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         Annotations a = interceptedRequest.annotations();
         for(int i = 0; i < this.rules.size(); i++){
             if (this.rules.get(i).getLocation().equals("Request") && this.rules.get(i).checkRule(interceptedRequest)){
-                a = this.rules.get(i).annotateRequest(a);
+                if(this.rules.get(i).getAction().equals("Highlight") || this.rules.get(i).getAction().equals("Add Note"))
+                    a = this.rules.get(i).annotateRequest(a);
+                else if (this.rules.get(i).getAction().equals("Drop Req/Res")){
+                    return ProxyRequestReceivedAction.drop();
+                }
             }
         }
         return ProxyRequestReceivedAction.continueWith(interceptedRequest, a);
