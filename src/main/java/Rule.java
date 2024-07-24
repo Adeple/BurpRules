@@ -21,21 +21,11 @@ public class Rule {
     }
 
     public boolean checkRule(InterceptedRequest req){
-        if (req.toString().contains(this.query) == (this.condition.equals("Contains"))){
-           return true;
-        }
-        else{
-            return false;
-        }
+        return req.toString().contains(this.query) == (this.condition.equals("Contains"));
     }
 
     public boolean checkRule(InterceptedResponse res){
-        if (res.toString().contains(this.query) == (this.condition.equals("Contains"))){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return res.toString().contains(this.query) == (this.condition.equals("Contains"));
     }
 
     public Annotations annotateRequest(Annotations a){

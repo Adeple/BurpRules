@@ -1,10 +1,8 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
 import burp.api.montoya.proxy.http.*;
-
 import java.util.ArrayList;
 
-import static burp.api.montoya.core.HighlightColor.*;
 
 public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
     private ArrayList<Rule> rules;
@@ -12,13 +10,13 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
     private MontoyaApi api;
 
     public ProxyHandler(){
-        this.rules = new ArrayList<Rule>();
+        this.rules = new ArrayList<>();
         this.ruleCount = 0;
     }
 
     public ProxyHandler(MontoyaApi api){
         this.api = api;
-        this.rules = new ArrayList<Rule>();
+        this.rules = new ArrayList<>();
         this.ruleCount = 0;
     }
 
@@ -32,7 +30,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         this.ruleCount++;
     }
     public void clearRules(){
-        this.rules = new ArrayList<Rule>();
+        this.rules = new ArrayList<>();
         this.ruleCount = 0;
     }
 
@@ -43,11 +41,11 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
     @Override
     public ProxyRequestReceivedAction handleRequestReceived(InterceptedRequest interceptedRequest) {
         Annotations a = interceptedRequest.annotations();
-        for(int i = 0; i < this.rules.size(); i++){
-            if (this.rules.get(i).getLocation().equals("Request") && this.rules.get(i).checkRule(interceptedRequest)){
-                if(this.rules.get(i).getAction().equals("Highlight") || this.rules.get(i).getAction().equals("Add Note"))
-                    a = this.rules.get(i).annotateRequest(a);
-                else if (this.rules.get(i).getAction().equals("Drop Req/Res")){
+        for (Rule rule : this.rules) {
+            if (rule.getLocation().equals("Request") && rule.checkRule(interceptedRequest)) {
+                if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note"))
+                    a = rule.annotateRequest(a);
+                else if (rule.getAction().equals("Drop Req/Res")) {
                     return ProxyRequestReceivedAction.drop();
                 }
             }
@@ -62,9 +60,9 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
 
     @Override
     public ProxyResponseReceivedAction handleResponseReceived(InterceptedResponse interceptedResponse) {
-        for(int i = 0; i < this.rules.size(); i++){
-            if (this.rules.get(i).getLocation().equals("Response") && rules.get(i).checkRule(interceptedResponse)){
-                return ProxyResponseReceivedAction.continueWith(interceptedResponse, interceptedResponse.annotations().withHighlightColor(this.rules.get(i).getColor()));
+        for (Rule rule : this.rules) {
+            if (rule.getLocation().equals("Response") && rule.checkRule(interceptedResponse)) {
+                return ProxyResponseReceivedAction.continueWith(interceptedResponse, interceptedResponse.annotations().withHighlightColor(rule.getColor()));
             }
         }
         return ProxyResponseReceivedAction.continueWith(interceptedResponse);

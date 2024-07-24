@@ -1,9 +1,6 @@
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.logging.*;
-
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class BurpRules extends AddRules implements BurpExtension {

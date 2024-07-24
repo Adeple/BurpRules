@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class AddRules implements ActionListener {
     private JTextField ruleName;
@@ -59,10 +60,6 @@ public class AddRules implements ActionListener {
         return panel;
     }
 
-    public String getQueryContents() {
-        return this.query.getText();
-    }
-
     public void restoreDefaults(){
         this.ruleName.setText("");
         this.location.setSelectedIndex(0);
@@ -81,14 +78,14 @@ public class AddRules implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == this.addButton) {
             String detail = "";
-            if(((String)this.action.getSelectedItem()).equals("Highlight")){
+            if(Objects.equals(this.action.getSelectedItem(), "Highlight")){
                 detail = (String) this.colorSelect.getSelectedItem();
             }
             else if (((String)this.action.getSelectedItem()).equals("Add Note")){
                 detail = this.noteField.getText();
             }
-            this.model.addRow(new Object[]{this.ph.getRuleCount()+1, this.ruleName.getText(), (String) this.location.getSelectedItem(), (String) this.condition.getSelectedItem(),
-                    this.query.getText(), (String) this.action.getSelectedItem(), detail});
+            this.model.addRow(new Object[]{this.ph.getRuleCount()+1, this.ruleName.getText(), this.location.getSelectedItem(), this.condition.getSelectedItem(),
+                    this.query.getText(), this.action.getSelectedItem(), detail});
 
             //Set Highlighter color
             HighlightColor hc = switch ((String) this.colorSelect.getSelectedItem()) {
@@ -107,7 +104,7 @@ public class AddRules implements ActionListener {
             String note = this.noteField.getText();
 
 
-            this.ph.addRule(new Rule(this.ruleName.getText(), (String) this.location.getSelectedItem(), (String) this.condition.getSelectedItem(), (String) this.query.getText(), (String) this.action.getSelectedItem(), note, hc));
+            this.ph.addRule(new Rule(this.ruleName.getText(), (String) this.location.getSelectedItem(), (String) this.condition.getSelectedItem(), this.query.getText(), (String) this.action.getSelectedItem(), note, hc));
             this.model.fireTableDataChanged();
             restoreDefaults();
         }
