@@ -61,6 +61,8 @@
           <model>
             <item value="Contains"/>
             <item value="Does not contain"/>
+            <item value="Has header"/>
+            <item value="Lacks header"/>
           </model>
         </properties>
       </component>

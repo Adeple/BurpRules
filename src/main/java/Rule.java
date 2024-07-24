@@ -21,11 +21,23 @@ public class Rule {
     }
 
     public boolean checkRule(InterceptedRequest req){
-        return req.toString().contains(this.query) == (this.condition.equals("Contains"));
+        if (this.condition.equals("Contains") || this.condition.equals("Does not contain")){
+            return req.toString().contains(this.query) == (this.condition.equals("Contains"));
+        }
+        else if (this.condition.equals("Has header") || this.condition.equals("Lacks header")){
+            return req.hasHeader(this.query) == (this.condition.equals("Has header"));
+        }
+        else return false;
     }
 
     public boolean checkRule(InterceptedResponse res){
-        return res.toString().contains(this.query) == (this.condition.equals("Contains"));
+        if (this.condition.equals("Contains") || this.condition.equals("Does not contain")){
+            return res.toString().contains(this.query) == (this.condition.equals("Contains"));
+        }
+        else if (this.condition.equals("Has header") || this.condition.equals("Lacks header")){
+            return res.hasHeader(this.query) == (this.condition.equals("Has header"));
+        }
+        else return false;
     }
 
     public Annotations annotateRequest(Annotations a){

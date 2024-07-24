@@ -1,7 +1,8 @@
 import burp.api.montoya.core.HighlightColor;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
@@ -54,6 +55,18 @@ public class AddRules implements ActionListener {
         this.model = new DefaultTableModel(columns, 0);
         this.rulesTable.setModel(this.model);
         this.rulesTable.setDefaultEditor(Object.class, null);
+
+        //Set min/max width for each column
+        TableColumnModel tcm = this.rulesTable.getColumnModel();
+        tcm.getColumn(0).setMaxWidth(50);
+        tcm.getColumn(0).setResizable(false);
+
+        tcm.getColumn(1).setMaxWidth(1000);
+        tcm.getColumn(2).setMaxWidth(1000);
+        tcm.getColumn(3).setMaxWidth(1000);
+        tcm.getColumn(4).setMaxWidth(1000);
+        tcm.getColumn(5).setMaxWidth(1000);
+        tcm.getColumn(6).setMaxWidth(1000);
     }
 
     public JPanel getPanel(){
@@ -102,7 +115,6 @@ public class AddRules implements ActionListener {
             };
 
             String note = this.noteField.getText();
-
 
             this.ph.addRule(new Rule(this.ruleName.getText(), (String) this.location.getSelectedItem(), (String) this.condition.getSelectedItem(), this.query.getText(), (String) this.action.getSelectedItem(), note, hc));
             this.model.fireTableDataChanged();

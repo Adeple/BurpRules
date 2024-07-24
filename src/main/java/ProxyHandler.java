@@ -1,5 +1,6 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
+import burp.api.montoya.logging.Logging;
 import burp.api.montoya.proxy.http.*;
 import java.util.ArrayList;
 
@@ -18,6 +19,11 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         this.api = api;
         this.rules = new ArrayList<>();
         this.ruleCount = 0;
+    }
+
+    public void print(String s){
+        Logging log = this.api.logging();
+        log.logToOutput(s);
     }
 
     public int getRuleCount(){
