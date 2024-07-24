@@ -51,7 +51,7 @@ public class AddRules implements ActionListener {
         this.noteLabel.setVisible(false);
 
         //Create Table
-        String[] columns = {"ID", "Rule Name", "Location", "Condition", "Query", "Action", "Note/Color"};
+        String[] columns = {"ID", "Rule Name", "Location", "Condition", "Query", "Action", "Note/Color/Header"};
         this.model = new DefaultTableModel(columns, 0);
         this.rulesTable.setModel(this.model);
         this.rulesTable.setDefaultEditor(Object.class, null);
@@ -95,6 +95,15 @@ public class AddRules implements ActionListener {
                 detail = (String) this.colorSelect.getSelectedItem();
             }
             else if (((String)this.action.getSelectedItem()).equals("Add Note")){
+                detail = this.noteField.getText();
+            }
+            else if(this.action.getSelectedItem().equals("Add Header")){
+                detail = this.noteField.getText();
+            }
+            else if (this.action.getSelectedItem().equals("Replace Header")){
+
+            }
+            else if (this.action.getSelectedItem().equals("Remove Header")){
                 detail = this.noteField.getText();
             }
             this.model.addRow(new Object[]{this.ph.getRuleCount()+1, this.ruleName.getText(), this.location.getSelectedItem(), this.condition.getSelectedItem(),
@@ -141,12 +150,34 @@ public class AddRules implements ActionListener {
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(true);
                 this.noteLabel.setVisible(true);
+                this.noteLabel.setText("Note:");
             }
             else if (this.action.getSelectedIndex() == 2){
                 this.colorSelect.setVisible(false);
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(false);
                 this.noteLabel.setVisible(false);
+            }
+            else if (this.action.getSelectedIndex() == 3){
+                this.colorSelect.setVisible(false);
+                this.highlightLabel.setVisible(false);
+                this.noteField.setVisible(true);
+                this.noteLabel.setVisible(true);
+                this.noteLabel.setText("Header:");
+            }
+            else if (this.action.getSelectedIndex() == 4){
+                this.colorSelect.setVisible(false);
+                this.highlightLabel.setVisible(false);
+                this.noteField.setVisible(true);
+                this.noteLabel.setVisible(true);
+                this.noteLabel.setText("Header:");
+            }
+            else if (this.action.getSelectedIndex() == 5){
+                this.colorSelect.setVisible(false);
+                this.highlightLabel.setVisible(false);
+                this.noteField.setVisible(true);
+                this.noteLabel.setVisible(true);
+                this.noteLabel.setText("Header:");
             }
         }
     }

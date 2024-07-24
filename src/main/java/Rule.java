@@ -73,6 +73,9 @@ public class Rule {
     public String getLocation(){
         return this.location;
     }
+    public String getNote() {
+        return note;
+    }
     public String getQuery() {
         return query;
     }
@@ -92,6 +95,9 @@ public class Rule {
     }
     public void setLocation(String location) {
         this.location = location;
+    }
+    public void setNote(String note) {
+        this.note = note;
     }
     public void setQuery(String query) {
         this.query = query;

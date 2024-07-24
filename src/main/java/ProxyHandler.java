@@ -1,7 +1,9 @@
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.Annotations;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.proxy.http.*;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import java.util.ArrayList;
 
 
@@ -47,6 +49,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
     @Override
     public ProxyRequestReceivedAction handleRequestReceived(InterceptedRequest interceptedRequest) {
         Annotations a = interceptedRequest.annotations();
+        HttpRequest hr = (HttpRequest) interceptedRequest;
         for (Rule rule : this.rules) {
             if (rule.getLocation().equals("Request") && rule.checkRule(interceptedRequest)) {
                 if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note"))
@@ -54,9 +57,23 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                 else if (rule.getAction().equals("Drop Req/Res")) {
                     return ProxyRequestReceivedAction.drop();
                 }
+                if (rule.getAction().equals("Add Header")){
+                    String n = rule.getNote();
+                    if(n.indexOf(": ") != -1){
+                        String headerName = n.substring(0, n.indexOf(": "));
+                        String headerBody = n.substring(n.indexOf(": ")+2);
+                        hr = hr.withAddedHeader(headerName, headerBody);
+                    }
+                }
+                if (rule.getAction().equals("Replace Header")){
+
+                }
+                if (rule.getAction().equals("Remove Header")){
+                    hr = hr.withRemovedHeader(rule.getNote());
+                }
             }
         }
-        return ProxyRequestReceivedAction.continueWith(interceptedRequest, a);
+        return ProxyRequestReceivedAction.continueWith(hr, a);
     }
 
     @Override
@@ -67,6 +84,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
     @Override
     public ProxyResponseReceivedAction handleResponseReceived(InterceptedResponse interceptedResponse) {
         Annotations a = interceptedResponse.annotations();
+        HttpResponse hr = (HttpResponse) interceptedResponse;
         for (Rule rule : this.rules) {
             if (rule.getLocation().equals("Response") && rule.checkRule(interceptedResponse)) {
                 if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note"))
@@ -74,9 +92,23 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                 else if (rule.getAction().equals("Drop Req/Res")) {
                     return ProxyResponseReceivedAction.drop();
                 }
+                if (rule.getAction().equals("Add Header")){
+                    String n = rule.getNote();
+                    if(n.indexOf(": ") != -1){
+                        String headerName = n.substring(0, n.indexOf(": "));
+                        String headerBody = n.substring(n.indexOf(": ")+2);
+                        hr = hr.withAddedHeader(headerName, headerBody);
+                    }
+                }
+                if (rule.getAction().equals("Replace Header")){
+
+                }
+                if (rule.getAction().equals("Remove Header")){
+                    hr = hr.withRemovedHeader(rule.getNote());
+                }
             }
         }
-        return ProxyResponseReceivedAction.continueWith(interceptedResponse, a);
+        return ProxyResponseReceivedAction.continueWith(hr, a);
     }
 
     @Override

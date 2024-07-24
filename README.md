@@ -3,8 +3,8 @@
 
 - [ ] Actions
   - [ ] Find and Replace
-  - [ ] Add Header
-  - [ ] Remove Header
+  - [X] Add Header
+  - [X] Remove Header
 - [ ] Locations
   - [ ] Request & Response
   - [X] Request Header

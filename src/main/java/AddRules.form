@@ -123,6 +123,9 @@
             <item value="Highlight"/>
             <item value="Add Note"/>
             <item value="Drop Req/Res"/>
+            <item value="Add Header"/>
+            <item value="Replace Header"/>
+            <item value="Remove Header"/>
           </model>
         </properties>
       </component>
