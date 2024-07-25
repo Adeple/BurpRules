@@ -20,4 +20,4 @@
 - [X] Export Rules to file
   - [X] Import rules from file
 - [ ] Persistence
-  - [ ] Change from CSV to JSON 
+  - [ ] Change from CSV to JSON
