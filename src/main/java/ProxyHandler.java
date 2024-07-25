@@ -37,6 +37,9 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         this.rules.add(r);
         this.ruleCount++;
     }
+    public void deleteRule(int index){
+        this.rules.set(index, new Rule());
+    }
     public void clearRules(){
         this.rules = new ArrayList<>();
         this.ruleCount = 0;

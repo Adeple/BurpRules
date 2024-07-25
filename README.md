@@ -13,10 +13,9 @@
   - [ ] Body
 - [ ] Condition
   - [ ] Regex checkbox
-- [ ] Table
-  - [ ] ~~Checkboxes on each rule~~
-  - [ ] Delete Rule using dropdown menu
-  - [ ] UI changes to column width
+- [X] Table
+  - [X] Delete selected rule ~~using dropdown menu~~
+  - [X] UI changes to column width
 - [ ] Export Rules to file
   - [ ] Import rules from file
 - [ ] Persistence

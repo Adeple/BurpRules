@@ -2,7 +2,6 @@ import burp.api.montoya.core.HighlightColor;
 
 import javax.swing.*;
 import javax.swing.table.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Objects;
@@ -25,26 +24,24 @@ public class AddRules implements ActionListener {
     private JButton clearButton;
     private JLabel noteLabel;
     private JTextField noteField;
+    private JButton exportButton;
+    private JButton importButton;
+    private JButton deleteButton;
     private DefaultTableModel model;
     private ProxyHandler ph;
 
     public AddRules(){
-        this.addButton.addActionListener(this);
-        String[] columns = {"Rule Name", "Location", "Condition", "Query", "Action", "Note/Color"};
-        this.model = new DefaultTableModel(columns, 0);
-
-        this.rulesTable.setModel(this.model);
-        this.rulesTable.setDefaultEditor(Object.class, null);
-        new JScrollPane();
+//        this.addButton.addActionListener(this);
+//        String[] columns = {"Rule Name", "Location", "Condition", "Query", "Action", "Note/Color"};
+//        this.model = new DefaultTableModel(columns, 0);
+//
+//        this.rulesTable.setModel(this.model);
+//        this.rulesTable.setDefaultEditor(Object.class, null);
+//        new JScrollPane();
     }
 
     public AddRules(ProxyHandler ph){
         this.ph = ph;
-
-        //Add ActionListeners
-        this.addButton.addActionListener(this);
-        this.clearButton.addActionListener(this);
-        this.action.addActionListener(this);
 
         //Hide options not in use
         this.noteField.setVisible(false);
@@ -56,17 +53,25 @@ public class AddRules implements ActionListener {
         this.rulesTable.setModel(this.model);
         this.rulesTable.setDefaultEditor(Object.class, null);
 
-        //Set min/max width for each column
+        //Set width for each column
         TableColumnModel tcm = this.rulesTable.getColumnModel();
         tcm.getColumn(0).setMaxWidth(50);
         tcm.getColumn(0).setResizable(false);
-
         tcm.getColumn(1).setMaxWidth(1000);
         tcm.getColumn(2).setMaxWidth(1000);
         tcm.getColumn(3).setMaxWidth(1000);
         tcm.getColumn(4).setMaxWidth(1000);
         tcm.getColumn(5).setMaxWidth(1000);
         tcm.getColumn(6).setMaxWidth(1000);
+
+        //Add ActionListeners
+        this.addButton.addActionListener(this);
+        this.clearButton.addActionListener(this);
+        this.action.addActionListener(this);
+        this.importButton.addActionListener(this);
+        this.exportButton.addActionListener(this);
+        this.deleteButton.addActionListener(this);
+
     }
 
     public JPanel getPanel(){
@@ -137,6 +142,15 @@ public class AddRules implements ActionListener {
             this.model.fireTableDataChanged();
             this.rulesTable.repaint();
             this.rulesTable.revalidate();
+        }
+        else if (e.getSource() == this.deleteButton){
+            int[] rows = this.rulesTable.getSelectedRows();
+            for(int i = rows.length-1; i >= 0; i--) {
+                int index = (int) this.rulesTable.getValueAt(rows[i], 0);
+                this.model.removeRow(rows[i]);
+                this.ph.deleteRule(index-1);
+            }
+            this.model.fireTableDataChanged();
         }
         else if(e.getSource() == this.action){
             if(this.action.getSelectedIndex() == 0){

@@ -9,6 +9,17 @@ public class Rule {
     private HighlightColor color;
 
     //Constructor
+    public Rule(){
+        this.ruleName = "";
+        this.location = "";
+        this.condition = "";
+        this.query = "";
+        this.action = "";
+        this.id = -1;
+        this.color = null;
+        this.note = "";
+    }
+
     public Rule(String ruleName, String location, String condition, String query, String action, String note, HighlightColor color){
         this.ruleName = ruleName;
         this.location = location;
