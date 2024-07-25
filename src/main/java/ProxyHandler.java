@@ -48,7 +48,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         Annotations a = interceptedRequest.annotations();
         HttpRequest hr = (HttpRequest) interceptedRequest;
         for (Rule rule : this.rules) {
-            if (rule.getLocation().equals("Request") && rule.checkRule(interceptedRequest)) {
+            if (rule.getLocation().contains("Request") && rule.checkRule(interceptedRequest)) {
                 if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note"))
                     a = rule.annotateRequest(a);
                 else if (rule.getAction().equals("Drop Req/Res")) {
@@ -81,7 +81,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         Annotations a = interceptedResponse.annotations();
         HttpResponse hr = (HttpResponse) interceptedResponse;
         for (Rule rule : this.rules) {
-            if (rule.getLocation().equals("Response") && rule.checkRule(interceptedResponse)) {
+            if (rule.getLocation().contains("Response") && rule.checkRule(interceptedResponse)) {
                 if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note"))
                     a = rule.annotateResponse(a);
                 else if (rule.getAction().equals("Drop Req/Res")) {

@@ -6,7 +6,7 @@
   - [X] Add Header
   - [X] Remove Header
 - [ ] Locations
-  - [ ] Request & Response
+  - [X] Request & Response
   - [X] Request Header
   - [X] Response Header
   - [ ] Cookie
