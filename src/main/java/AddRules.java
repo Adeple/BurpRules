@@ -133,6 +133,7 @@ public class AddRules implements ActionListener {
     public void parseOutFile(File outfile) {
             try{
             FileWriter write = new FileWriter(outfile);
+            write.write("[");
             for(int i = 0; i < this.ph.getRules().size(); i++){
                 String color = switch (this.ph.getRules().get(i).getColor()) {
                     case HighlightColor.RED -> "Red";
@@ -146,12 +147,18 @@ public class AddRules implements ActionListener {
                     case HighlightColor.GRAY -> "Gray";
                     default -> "";
                 };
-                String line = this.ph.getRules().get(i).getRuleName() + "," + this.ph.getRules().get(i).getLocation() + "," + this.ph.getRules().get(i).getCondition() + ","
-                        + this.ph.getRules().get(i).getQuery() + "," + this.ph.getRules().get(i).getAction() + "," + this.ph.getRules().get(i).getNote() + "," + color +
-                         "," + (this.ph.getRules().get(i).getIsRegex() ? "Regex" : "String") + "\n";
+                String line = "{\"RuleName\": \"" + this.ph.getRules().get(i).getRuleName() + "\", \"Location\":\"" + this.ph.getRules().get(i).getLocation() + "\", \"Condition\":\""
+                        + this.ph.getRules().get(i).getCondition() + "\", \"Query\":\"" + this.ph.getRules().get(i).getQuery() + "\", \"Action\":\"" + this.ph.getRules().get(i).getAction()
+                        + "\", \"Note\":\"" + this.ph.getRules().get(i).getNote() + "\", \"Color\":\"" + color +
+                         "\", \"QueryType\":\"" + (this.ph.getRules().get(i).getIsRegex() ? "Regex" : "String") + "\"}";
+                if(i < this.ph.getRules().size() -1) {
+                    line += ",";
+                }
+                line += "\n";
                 write.write(line);
                 write.flush();
             }
+            write.write("]");
             write.close();
             }
             catch(IOException noFile){
@@ -235,11 +242,11 @@ public class AddRules implements ActionListener {
             JFileChooser fc = new JFileChooser();
             int temp = fc.showSaveDialog(null);
             if(temp == JFileChooser.APPROVE_OPTION){
-                if(fc.getSelectedFile().getPath().contains(".csv")){
+                if(fc.getSelectedFile().getPath().contains(".json")){
                     parseOutFile(fc.getSelectedFile());
                 }
                 else{
-                    parseOutFile(new File(fc.getSelectedFile()+".csv"));
+                    parseOutFile(new File(fc.getSelectedFile()+".json"));
 
                 }
             }
