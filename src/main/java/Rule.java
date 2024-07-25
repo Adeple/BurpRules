@@ -40,7 +40,6 @@ public class Rule {
         }
         else return false;
     }
-
     public boolean checkRule(InterceptedResponse res){
         if (this.condition.equals("Contains") || this.condition.equals("Does not contain")){
             return res.toString().contains(this.query) == (this.condition.equals("Contains"));
@@ -50,7 +49,6 @@ public class Rule {
         }
         else return false;
     }
-
     public Annotations annotateRequest(Annotations a){
         if(this.action.equals("Highlight")){
             a = a.withHighlightColor(this.color);
@@ -60,7 +58,6 @@ public class Rule {
         }
         return a;
     }
-
     public Annotations annotateResponse(Annotations a){
         if(this.action.equals("Highlight")){
             a = a.withHighlightColor(this.color);

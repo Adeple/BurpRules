@@ -1,10 +1,15 @@
 import burp.api.montoya.core.HighlightColor;
-
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class AddRules implements ActionListener {
     private JTextField ruleName;
@@ -92,6 +97,65 @@ public class AddRules implements ActionListener {
         this.noteLabel.setVisible(false);
     }
 
+    //Import rules file (CSV)
+    public void parseInFile(File infile) throws FileNotFoundException {
+        try {
+            Scanner scan = new Scanner(infile);
+            while(scan.hasNextLine()){
+                String line;
+                line = scan.nextLine();
+                String[] vals = line.split(",");
+                HighlightColor hc = switch (vals[6]) {
+                    case "Red" -> HighlightColor.RED;
+                    case "Orange" -> HighlightColor.ORANGE;
+                    case "Yellow" -> HighlightColor.YELLOW;
+                    case "Green" -> HighlightColor.GREEN;
+                    case "Cyan" -> HighlightColor.CYAN;
+                    case "Blue" -> HighlightColor.BLUE;
+                    case "Pink" -> HighlightColor.PINK;
+                    case "Magenta" -> HighlightColor.MAGENTA;
+                    case "Gray" -> HighlightColor.GRAY;
+                    default -> HighlightColor.NONE;
+                };
+                this.model.addRow(new Object[]{this.ph.getRuleCount()+1, vals[0], vals[1], vals[2], vals[3], vals[4], vals[4].equals("Highlight") ? vals[6] : vals[5]});
+                this.ph.addRule(new Rule(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], hc));
+            }
+            scan.close();
+        }
+        catch(FileNotFoundException noFile){
+            return;
+        }
+    }
+
+    //Export rules file (CSV)
+    public void parseOutFile(File outfile) {
+            try{
+            FileWriter write = new FileWriter(outfile);
+            for(int i = 0; i < this.ph.getRules().size(); i++){
+                String color = switch (this.ph.getRules().get(i).getColor()) {
+                    case HighlightColor.RED -> "Red";
+                    case HighlightColor.ORANGE -> "Orange";
+                    case HighlightColor.YELLOW -> "Yellow";
+                    case HighlightColor.GREEN -> "Green";
+                    case HighlightColor.CYAN -> "Cyan";
+                    case HighlightColor.BLUE -> "Blue";
+                    case HighlightColor.PINK -> "Pink";
+                    case HighlightColor.MAGENTA -> "Magenta";
+                    case HighlightColor.GRAY -> "Gray";
+                    default -> "";
+                };
+                String line = this.ph.getRules().get(i).getRuleName() + "," + this.ph.getRules().get(i).getLocation() + "," + this.ph.getRules().get(i).getCondition() + ","
+                        + this.ph.getRules().get(i).getQuery() + "," + this.ph.getRules().get(i).getAction() + "," + this.ph.getRules().get(i).getNote() + "," + color + "\n";
+                write.write(line);
+                write.flush();
+            }
+            write.close();
+            }
+            catch(IOException noFile){
+                return;
+            }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == this.addButton) {
@@ -140,8 +204,6 @@ public class AddRules implements ActionListener {
                 this.model.removeRow(i-1);
             }
             this.model.fireTableDataChanged();
-            this.rulesTable.repaint();
-            this.rulesTable.revalidate();
         }
         else if (e.getSource() == this.deleteButton){
             int[] rows = this.rulesTable.getSelectedRows();
@@ -151,6 +213,27 @@ public class AddRules implements ActionListener {
                 this.ph.deleteRule(index-1);
             }
             this.model.fireTableDataChanged();
+        }
+        else if(e.getSource() == this.importButton){
+            JFileChooser fc = new JFileChooser();
+            FileNameExtensionFilter infil = new FileNameExtensionFilter(".csv", "csv");
+            fc.setFileFilter(infil);
+            int temp = fc.showOpenDialog(null);
+            if(temp == JFileChooser.APPROVE_OPTION){
+                try {
+                    parseInFile(fc.getSelectedFile());
+                } catch (FileNotFoundException ex) {
+                    return;
+                }
+            }
+        }
+        else if (e.getSource() == this.exportButton){
+            JFileChooser fc = new JFileChooser();
+            int temp = fc.showSaveDialog(null);
+            if(temp == JFileChooser.APPROVE_OPTION){
+                    parseOutFile(fc.getSelectedFile());
+
+            }
         }
         else if(e.getSource() == this.action){
             if(this.action.getSelectedIndex() == 0){

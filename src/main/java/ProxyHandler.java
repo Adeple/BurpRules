@@ -16,22 +16,18 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         this.rules = new ArrayList<>();
         this.ruleCount = 0;
     }
-
     public ProxyHandler(MontoyaApi api){
         this.api = api;
         this.rules = new ArrayList<>();
         this.ruleCount = 0;
     }
-
     public void print(String s){
         Logging log = this.api.logging();
         log.logToOutput(s);
     }
-
     public int getRuleCount(){
         return this.ruleCount;
     }
-
     public void addRule(Rule r){
         r.setID(this.ruleCount+1);
         this.rules.add(r);
@@ -44,11 +40,9 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         this.rules = new ArrayList<>();
         this.ruleCount = 0;
     }
-
     public ArrayList<Rule> getRules() {
         return this.rules;
     }
-
     @Override
     public ProxyRequestReceivedAction handleRequestReceived(InterceptedRequest interceptedRequest) {
         Annotations a = interceptedRequest.annotations();
@@ -78,12 +72,10 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         }
         return ProxyRequestReceivedAction.continueWith(hr, a);
     }
-
     @Override
     public ProxyRequestToBeSentAction handleRequestToBeSent(InterceptedRequest interceptedRequest) {
         return ProxyRequestToBeSentAction.continueWith(interceptedRequest);
     }
-
     @Override
     public ProxyResponseReceivedAction handleResponseReceived(InterceptedResponse interceptedResponse) {
         Annotations a = interceptedResponse.annotations();
@@ -113,7 +105,6 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         }
         return ProxyResponseReceivedAction.continueWith(hr, a);
     }
-
     @Override
     public ProxyResponseToBeSentAction handleResponseToBeSent(InterceptedResponse interceptedResponse) {
         return ProxyResponseToBeSentAction.continueWith(interceptedResponse);
