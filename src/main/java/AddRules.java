@@ -231,7 +231,7 @@ public class AddRules implements ActionListener {
             JFileChooser fc = new JFileChooser();
             int temp = fc.showSaveDialog(null);
             if(temp == JFileChooser.APPROVE_OPTION){
-                    parseOutFile(fc.getSelectedFile());
+                    parseOutFile(new File(fc.getSelectedFile()+".csv"));
 
             }
         }
