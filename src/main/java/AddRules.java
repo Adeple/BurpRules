@@ -32,6 +32,7 @@ public class AddRules implements ActionListener {
     private JButton exportButton;
     private JButton importButton;
     private JButton deleteButton;
+    private JCheckBox regexCheckBox;
     private DefaultTableModel model;
     private ProxyHandler ph;
 
@@ -90,6 +91,7 @@ public class AddRules implements ActionListener {
         this.action.setSelectedIndex(0);
         this.colorSelect.setSelectedIndex(0);
         this.noteField.setText("");
+        this.regexCheckBox.setSelected(false);
 
         this.colorSelect.setVisible(true);
         this.highlightLabel.setVisible(true);
@@ -118,7 +120,7 @@ public class AddRules implements ActionListener {
                     default -> HighlightColor.NONE;
                 };
                 this.model.addRow(new Object[]{this.ph.getRuleCount()+1, vals[0], vals[1], vals[2], vals[3], vals[4], vals[4].equals("Highlight") ? vals[6] : vals[5]});
-                this.ph.addRule(new Rule(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], hc));
+                this.ph.addRule(new Rule(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], hc, vals[7].equals("Regex") ? true : false));
             }
             scan.close();
         }
@@ -145,7 +147,8 @@ public class AddRules implements ActionListener {
                     default -> "";
                 };
                 String line = this.ph.getRules().get(i).getRuleName() + "," + this.ph.getRules().get(i).getLocation() + "," + this.ph.getRules().get(i).getCondition() + ","
-                        + this.ph.getRules().get(i).getQuery() + "," + this.ph.getRules().get(i).getAction() + "," + this.ph.getRules().get(i).getNote() + "," + color + "\n";
+                        + this.ph.getRules().get(i).getQuery() + "," + this.ph.getRules().get(i).getAction() + "," + this.ph.getRules().get(i).getNote() + "," + color +
+                         "," + (this.ph.getRules().get(i).getIsRegex() ? "Regex" : "String") + "\n";
                 write.write(line);
                 write.flush();
             }
@@ -194,7 +197,8 @@ public class AddRules implements ActionListener {
 
             String note = this.noteField.getText();
 
-            this.ph.addRule(new Rule(this.ruleName.getText(), (String) this.location.getSelectedItem(), (String) this.condition.getSelectedItem(), this.query.getText(), (String) this.action.getSelectedItem(), note, hc));
+            this.ph.addRule(new Rule(this.ruleName.getText(), (String) this.location.getSelectedItem(), (String) this.condition.getSelectedItem(),
+                    this.query.getText(), (String) this.action.getSelectedItem(), note, hc, this.regexCheckBox.isSelected()));
             this.model.fireTableDataChanged();
             restoreDefaults();
         }
@@ -231,8 +235,13 @@ public class AddRules implements ActionListener {
             JFileChooser fc = new JFileChooser();
             int temp = fc.showSaveDialog(null);
             if(temp == JFileChooser.APPROVE_OPTION){
+                if(fc.getSelectedFile().getPath().contains(".csv")){
+                    parseOutFile(fc.getSelectedFile());
+                }
+                else{
                     parseOutFile(new File(fc.getSelectedFile()+".csv"));
 
+                }
             }
         }
         else if(e.getSource() == this.action){

@@ -3,10 +3,13 @@ import burp.api.montoya.core.HighlightColor;
 import burp.api.montoya.proxy.http.InterceptedRequest;
 import burp.api.montoya.proxy.http.InterceptedResponse;
 
+import java.util.regex.Pattern;
+
 public class Rule {
     private int id;
     private String ruleName, location, condition, query, action, note;
     private HighlightColor color;
+    private Boolean isRegex;
 
     //Constructor
     public Rule(){
@@ -18,9 +21,10 @@ public class Rule {
         this.id = -1;
         this.color = null;
         this.note = "";
+        this.isRegex = false;
     }
 
-    public Rule(String ruleName, String location, String condition, String query, String action, String note, HighlightColor color){
+    public Rule(String ruleName, String location, String condition, String query, String action, String note, HighlightColor color, Boolean isRegex){
         this.ruleName = ruleName;
         this.location = location;
         this.condition = condition;
@@ -29,11 +33,16 @@ public class Rule {
         this.id = -1;
         this.color = color;
         this.note = note;
+        this.isRegex = isRegex;
     }
 
     public boolean checkRule(InterceptedRequest req){
         if (this.condition.equals("Contains") || this.condition.equals("Does not contain")){
-            return req.toString().contains(this.query) == (this.condition.equals("Contains"));
+            if(this.isRegex) {
+                return Pattern.compile(this.query).matcher(req.toString()).find() == (this.condition.equals("Contains"));            }
+            else {
+                return req.toString().contains(this.query) == (this.condition.equals("Contains"));
+            }
         }
         else if (this.condition.equals("Has header") || this.condition.equals("Lacks header")){
             return req.hasHeader(this.query) == (this.condition.equals("Has header"));
@@ -42,7 +51,12 @@ public class Rule {
     }
     public boolean checkRule(InterceptedResponse res){
         if (this.condition.equals("Contains") || this.condition.equals("Does not contain")){
-            return res.toString().contains(this.query) == (this.condition.equals("Contains"));
+            if(this.isRegex) {
+                return Pattern.compile(this.query).matcher(res.toString()).find() == (this.condition.equals("Contains"));
+            }
+            else {
+                return res.toString().contains(this.query) == (this.condition.equals("Contains"));
+            }
         }
         else if (this.condition.equals("Has header") || this.condition.equals("Lacks header")){
             return res.hasHeader(this.query) == (this.condition.equals("Has header"));
@@ -78,6 +92,9 @@ public class Rule {
     public String getCondition() {
         return condition;
     }
+    public Boolean getIsRegex(){
+        return this.isRegex;
+    }
     public String getLocation(){
         return this.location;
     }
@@ -100,6 +117,9 @@ public class Rule {
     }
     public void setID(int id){
         this.id = id;
+    }
+    public void setIsRegex(Boolean isRegex) {
+        this.isRegex = isRegex;
     }
     public void setLocation(String location) {
         this.location = location;
