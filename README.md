@@ -5,6 +5,7 @@
   - [ ] Find and Replace
   - [X] Add Header
   - [X] Remove Header
+  - [X] Replace Header
 - [ ] Locations
   - [X] Request & Response
   - [X] Request Header
@@ -21,3 +22,6 @@
   - [X] Import rules from file
 - [X] Persistence
   - [X] Change from CSV to JSON
+- [ ] UI/Functionality
+  - [ ] Duplicate Rule Button
+  - [ ] Edit Rule Button

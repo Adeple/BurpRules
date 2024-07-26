@@ -63,7 +63,12 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                     }
                 }
                 if (rule.getAction().equals("Replace Header")){
-
+                    String n = rule.getNote();
+                    if(n.indexOf(": ") != -1){
+                        String headerName = n.substring(0, n.indexOf(": "));
+                        String headerBody = n.substring(n.indexOf(": ")+2);
+                        hr = hr.withHeader(headerName, headerBody);
+                    }
                 }
                 if (rule.getAction().equals("Remove Header")){
                     hr = hr.withRemovedHeader(rule.getNote());
@@ -96,7 +101,12 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                     }
                 }
                 if (rule.getAction().equals("Replace Header")){
-
+                    String n = rule.getNote();
+                    if(n.indexOf(": ") != -1){
+                        String headerName = n.substring(0, n.indexOf(": "));
+                        String headerBody = n.substring(n.indexOf(": ")+2);
+                        hr = hr.withUpdatedHeader(headerName, headerBody);
+                    }
                 }
                 if (rule.getAction().equals("Remove Header")){
                     hr = hr.withRemovedHeader(rule.getNote());

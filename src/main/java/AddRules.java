@@ -189,7 +189,7 @@ public class AddRules implements ActionListener {
                 detail = this.noteField.getText();
             }
             else if (this.action.getSelectedItem().equals("Replace Header")){
-
+                detail = this.noteField.getText();
             }
             else if (this.action.getSelectedItem().equals("Remove Header")){
                 detail = this.noteField.getText();
