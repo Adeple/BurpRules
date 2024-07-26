@@ -13,7 +13,7 @@
   - [ ] Body
 - [X] Condition
   - [X] Regex checkbox
-    - [ ] Fix Regex Parsing (i.e. special characters \.* etc.)
+    - [X] Fix Regex Parsing (i.e. special characters \.* etc.)
 - [X] Table
   - [X] Delete selected rule ~~using dropdown menu~~
   - [X] UI changes to column width

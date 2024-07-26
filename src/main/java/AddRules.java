@@ -103,7 +103,7 @@ public class AddRules implements ActionListener {
     }
 
     //Import rules file (JSON)
-    public void parseInFile(File infile) throws IOException {
+    public void parseInFile(File infile) throws JSONException, IOException {
             Scanner scan = new Scanner(infile);
             StringBuilder sb = new StringBuilder();
             while(scan.hasNextLine()) {
@@ -128,12 +128,12 @@ public class AddRules implements ActionListener {
 
                       //Add row in table
                     this.model.addRow(new Object[]{this.ph.getRuleCount() + 1, r.getString("RuleName"), r.getString("Location"),
-                            r.getString("Condition"), r.getString("Query"), r.getString("Action"),
+                            r.getString("Condition"), r.getString("Query").replaceAll("\\\\\\\\", "\\\\"), r.getString("Action"),
                             r.getString("Action").equals("Highlight") ? r.getString("Color") : r.getString("Note")});
 
                     //Add rule in rules list
                     this.ph.addRule(new Rule(r.getString("RuleName"), r.getString("Location"), r.getString("Condition"),
-                            r.getString("Query"), r.getString("Action"), r.getString("Note"), hc, r.getString("QueryType").equals("Regex")));
+                            r.getString("Query"), r.getString("Action"), r.getString("Note"), hc, r.getString("QueryType").equals("RegEx")));
                 }
             scan.close();
     }
@@ -157,9 +157,9 @@ public class AddRules implements ActionListener {
                     default -> "";
                 };
                 String line = "{\"RuleName\": \"" + this.ph.getRules().get(i).getRuleName() + "\", \"Location\":\"" + this.ph.getRules().get(i).getLocation() + "\", \"Condition\":\""
-                        + this.ph.getRules().get(i).getCondition() + "\", \"Query\":\"" + this.ph.getRules().get(i).getQuery() + "\", \"Action\":\"" + this.ph.getRules().get(i).getAction()
+                        + this.ph.getRules().get(i).getCondition() + "\", \"Query\":\"" + this.ph.getRules().get(i).getQuery().replaceAll("\\\\", "\\\\\\\\") + "\", \"Action\":\"" + this.ph.getRules().get(i).getAction()
                         + "\", \"Note\":\"" + this.ph.getRules().get(i).getNote() + "\", \"Color\":\"" + color +
-                         "\", \"QueryType\":\"" + (this.ph.getRules().get(i).getIsRegex() ? "Regex" : "String") + "\"}";
+                         "\", \"QueryType\":\"" + (this.ph.getRules().get(i).getIsRegex() ? "RegEx" : "String") + "\"}";
                 if(i < this.ph.getRules().size() -1) {
                     line += ",";
                 }
@@ -242,13 +242,9 @@ public class AddRules implements ActionListener {
             if(temp == JFileChooser.APPROVE_OPTION){
                 try {
                     parseInFile(fc.getSelectedFile());
-                } catch (IOException ex) {
-                    this.model.addRow(new Object[]{"IO","","","","","",""});
-                    return;
                 }
-                catch (JSONException ex){
-                    this.model.addRow(new Object[]{"",ex.getMessage(),"","","","",""});
-
+                catch (IOException | JSONException ex){
+                    return;
                 }
             }
         }

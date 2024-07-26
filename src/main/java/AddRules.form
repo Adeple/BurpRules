@@ -243,7 +243,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Regex"/>
+          <text value="RegEx"/>
         </properties>
       </component>
       <hspacer id="40300">
