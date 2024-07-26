@@ -19,5 +19,5 @@
   - [X] UI changes to column width
 - [X] Export Rules to file
   - [X] Import rules from file
-- [ ] Persistence
-  - [ ] Change from CSV to JSON
+- [X] Persistence
+  - [X] Change from CSV to JSON

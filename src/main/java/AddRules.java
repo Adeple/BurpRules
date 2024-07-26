@@ -1,4 +1,8 @@
 import burp.api.montoya.core.HighlightColor;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
@@ -7,8 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Objects;
 import java.util.Scanner;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 public class AddRules implements ActionListener {
     private JTextField ruleName;
@@ -100,11 +103,17 @@ public class AddRules implements ActionListener {
     }
 
     //Import rules file (JSON)
-    public void parseInFile(File infile) throws FileNotFoundException {
-        try {
-                for (int i = 0; i < j.length(); i++) {
-                    JSONObject r = j.getJSONObject(i);
-                    HighlightColor hc = switch (r.getString("color")) {
+    public void parseInFile(File infile) throws IOException {
+            Scanner scan = new Scanner(infile);
+            StringBuilder sb = new StringBuilder();
+            while(scan.hasNextLine()) {
+                sb.append(scan.nextLine());
+            }
+            String content = sb.toString();
+            JSONArray jarr = new JSONArray(content);
+            for (int i = 0; i < jarr.length(); i++) {
+                JSONObject r = jarr.getJSONObject(i);
+                    HighlightColor hc = switch (r.getString("Color")) {
                         case "Red" -> HighlightColor.RED;
                         case "Orange" -> HighlightColor.ORANGE;
                         case "Yellow" -> HighlightColor.YELLOW;
@@ -117,7 +126,7 @@ public class AddRules implements ActionListener {
                         default -> HighlightColor.NONE;
                     };
 
-                    //Add row in table
+                      //Add row in table
                     this.model.addRow(new Object[]{this.ph.getRuleCount() + 1, r.getString("RuleName"), r.getString("Location"),
                             r.getString("Condition"), r.getString("Query"), r.getString("Action"),
                             r.getString("Action").equals("Highlight") ? r.getString("Color") : r.getString("Note")});
@@ -126,17 +135,14 @@ public class AddRules implements ActionListener {
                     this.ph.addRule(new Rule(r.getString("RuleName"), r.getString("Location"), r.getString("Condition"),
                             r.getString("Query"), r.getString("Action"), r.getString("Note"), hc, r.getString("QueryType").equals("Regex")));
                 }
-        }
-        catch(IOException noFile){
-            return;
-        }
+            scan.close();
     }
 
     //Export rules file (JSON)
     public void parseOutFile(File outfile) {
             try{
             FileWriter write = new FileWriter(outfile);
-            write.write("[");
+            write.write("[\n");
             for(int i = 0; i < this.ph.getRules().size(); i++){
                 String color = switch (this.ph.getRules().get(i).getColor()) {
                     case HighlightColor.RED -> "Red";
@@ -236,8 +242,13 @@ public class AddRules implements ActionListener {
             if(temp == JFileChooser.APPROVE_OPTION){
                 try {
                     parseInFile(fc.getSelectedFile());
-                } catch (FileNotFoundException ex) {
+                } catch (IOException ex) {
+                    this.model.addRow(new Object[]{"IO","","","","","",""});
                     return;
+                }
+                catch (JSONException ex){
+                    this.model.addRow(new Object[]{"",ex.getMessage(),"","","","",""});
+
                 }
             }
         }
