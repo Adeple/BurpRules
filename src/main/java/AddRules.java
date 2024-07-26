@@ -4,12 +4,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Objects;
 import java.util.Scanner;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AddRules implements ActionListener {
     private JTextField ruleName;
@@ -87,6 +86,7 @@ public class AddRules implements ActionListener {
     public void restoreDefaults(){
         this.ruleName.setText("");
         this.location.setSelectedIndex(0);
+        this.condition.setSelectedIndex(0);
         this.query.setText("");
         this.action.setSelectedIndex(0);
         this.colorSelect.setSelectedIndex(0);
@@ -99,37 +99,40 @@ public class AddRules implements ActionListener {
         this.noteLabel.setVisible(false);
     }
 
-    //Import rules file (CSV)
+    //Import rules file (JSON)
     public void parseInFile(File infile) throws FileNotFoundException {
         try {
-            Scanner scan = new Scanner(infile);
-            while(scan.hasNextLine()){
-                String line;
-                line = scan.nextLine();
-                String[] vals = line.split(",");
-                HighlightColor hc = switch (vals[6]) {
-                    case "Red" -> HighlightColor.RED;
-                    case "Orange" -> HighlightColor.ORANGE;
-                    case "Yellow" -> HighlightColor.YELLOW;
-                    case "Green" -> HighlightColor.GREEN;
-                    case "Cyan" -> HighlightColor.CYAN;
-                    case "Blue" -> HighlightColor.BLUE;
-                    case "Pink" -> HighlightColor.PINK;
-                    case "Magenta" -> HighlightColor.MAGENTA;
-                    case "Gray" -> HighlightColor.GRAY;
-                    default -> HighlightColor.NONE;
-                };
-                this.model.addRow(new Object[]{this.ph.getRuleCount()+1, vals[0], vals[1], vals[2], vals[3], vals[4], vals[4].equals("Highlight") ? vals[6] : vals[5]});
-                this.ph.addRule(new Rule(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5], hc, vals[7].equals("Regex") ? true : false));
-            }
-            scan.close();
+                for (int i = 0; i < j.length(); i++) {
+                    JSONObject r = j.getJSONObject(i);
+                    HighlightColor hc = switch (r.getString("color")) {
+                        case "Red" -> HighlightColor.RED;
+                        case "Orange" -> HighlightColor.ORANGE;
+                        case "Yellow" -> HighlightColor.YELLOW;
+                        case "Green" -> HighlightColor.GREEN;
+                        case "Cyan" -> HighlightColor.CYAN;
+                        case "Blue" -> HighlightColor.BLUE;
+                        case "Pink" -> HighlightColor.PINK;
+                        case "Magenta" -> HighlightColor.MAGENTA;
+                        case "Gray" -> HighlightColor.GRAY;
+                        default -> HighlightColor.NONE;
+                    };
+
+                    //Add row in table
+                    this.model.addRow(new Object[]{this.ph.getRuleCount() + 1, r.getString("RuleName"), r.getString("Location"),
+                            r.getString("Condition"), r.getString("Query"), r.getString("Action"),
+                            r.getString("Action").equals("Highlight") ? r.getString("Color") : r.getString("Note")});
+
+                    //Add rule in rules list
+                    this.ph.addRule(new Rule(r.getString("RuleName"), r.getString("Location"), r.getString("Condition"),
+                            r.getString("Query"), r.getString("Action"), r.getString("Note"), hc, r.getString("QueryType").equals("Regex")));
+                }
         }
-        catch(FileNotFoundException noFile){
+        catch(IOException noFile){
             return;
         }
     }
 
-    //Export rules file (CSV)
+    //Export rules file (JSON)
     public void parseOutFile(File outfile) {
             try{
             FileWriter write = new FileWriter(outfile);
@@ -227,7 +230,7 @@ public class AddRules implements ActionListener {
         }
         else if(e.getSource() == this.importButton){
             JFileChooser fc = new JFileChooser();
-            FileNameExtensionFilter infil = new FileNameExtensionFilter(".csv", "csv");
+            FileNameExtensionFilter infil = new FileNameExtensionFilter("JSON", "json");
             fc.setFileFilter(infil);
             int temp = fc.showOpenDialog(null);
             if(temp == JFileChooser.APPROVE_OPTION){
