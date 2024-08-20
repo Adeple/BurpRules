@@ -35,19 +35,16 @@ public class AddRules implements ActionListener {
     private JButton importButton;
     private JButton deleteButton;
     private JCheckBox regexCheckBox;
+    private JCheckBox requestCheckBox;
+    private JCheckBox responseCheckBox;
     private DefaultTableModel model;
     private ProxyHandler ph;
 
+    //Default Constructor
     public AddRules(){
-//        this.addButton.addActionListener(this);
-//        String[] columns = {"Rule Name", "Location", "Condition", "Query", "Action", "Note/Color"};
-//        this.model = new DefaultTableModel(columns, 0);
-//
-//        this.rulesTable.setModel(this.model);
-//        this.rulesTable.setDefaultEditor(Object.class, null);
-//        new JScrollPane();
     }
 
+    //AddRules Constructor
     public AddRules(ProxyHandler ph){
         this.ph = ph;
 
@@ -82,13 +79,17 @@ public class AddRules implements ActionListener {
 
     }
 
+    //Pass JPanel to main class
     public JPanel getPanel(){
         return panel;
     }
 
+    //Restore default UI
     public void restoreDefaults(){
         this.ruleName.setText("");
-        this.location.setSelectedIndex(0);
+//        this.location.setSelectedIndex(0);
+        this.requestCheckBox.setSelected(false);
+        this.responseCheckBox.setSelected(false);
         this.condition.setSelectedIndex(0);
         this.query.setText("");
         this.action.setSelectedIndex(0);
@@ -194,7 +195,17 @@ public class AddRules implements ActionListener {
             else if (this.action.getSelectedItem().equals("Remove Header")){
                 detail = this.noteField.getText();
             }
-            this.model.addRow(new Object[]{this.ph.getRuleCount()+1, this.ruleName.getText(), this.location.getSelectedItem(), this.condition.getSelectedItem(),
+
+            String location = "";
+            if (this.requestCheckBox.isSelected() && this.responseCheckBox.isSelected()){
+                    location += "Request & Response";
+            } else if (this.requestCheckBox.isSelected()) {
+                location += "Request";
+            } else if (this.responseCheckBox.isSelected()){
+                location += "Response";
+            }
+
+            this.model.addRow(new Object[]{this.ph.getRuleCount()+1, this.ruleName.getText(), location, this.condition.getSelectedItem(),
                     this.query.getText(), this.action.getSelectedItem(), detail});
 
             //Set Highlighter color
@@ -213,7 +224,7 @@ public class AddRules implements ActionListener {
 
             String note = this.noteField.getText();
 
-            this.ph.addRule(new Rule(this.ruleName.getText(), (String) this.location.getSelectedItem(), (String) this.condition.getSelectedItem(),
+            this.ph.addRule(new Rule(this.ruleName.getText(), location, (String) this.condition.getSelectedItem(),
                     this.query.getText(), (String) this.action.getSelectedItem(), note, hc, this.regexCheckBox.isSelected()));
             this.model.fireTableDataChanged();
             restoreDefaults();
