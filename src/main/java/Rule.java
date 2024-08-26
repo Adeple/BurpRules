@@ -36,6 +36,18 @@ public class Rule {
         this.isRegex = isRegex;
     }
 
+    public Rule(Rule r, int id){
+        this.ruleName = r.getRuleName();
+        this.location = r.getLocation();
+        this.condition = r.getCondition();
+        this.query = r.getQuery();
+        this.action = r.getAction();
+        this.color = r.getColor();
+        this.note = r.getNote();
+        this.isRegex = r.getIsRegex();
+        this.id = id;
+    }
+
     public boolean checkRule(InterceptedRequest req){
         if (this.condition.equals("Contains") || this.condition.equals("Does not contain")){
             if(this.isRegex) {

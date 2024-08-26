@@ -176,6 +176,7 @@ public class AddRules implements ActionListener {
             }
     }
 
+    //ActionListeners
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == this.addButton) {
@@ -229,14 +230,14 @@ public class AddRules implements ActionListener {
             this.model.fireTableDataChanged();
             restoreDefaults();
         }
-        else if (e.getSource() == this.clearButton){
+        else if (e.getSource() == this.clearButton){ //Clear rules
             this.ph.clearRules();
             for(int i = this.model.getRowCount(); i >= 0; i--){
                 this.model.removeRow(i-1);
             }
             this.model.fireTableDataChanged();
         }
-        else if (e.getSource() == this.deleteButton){
+        else if (e.getSource() == this.deleteButton){ // Delete rule
             int[] rows = this.rulesTable.getSelectedRows();
             for(int i = rows.length-1; i >= 0; i--) {
                 int index = (int) this.rulesTable.getValueAt(rows[i], 0);
@@ -245,7 +246,7 @@ public class AddRules implements ActionListener {
             }
             this.model.fireTableDataChanged();
         }
-        else if(e.getSource() == this.importButton){
+        else if(e.getSource() == this.importButton){ //Import rule(s)
             JFileChooser fc = new JFileChooser();
             FileNameExtensionFilter infil = new FileNameExtensionFilter("JSON", "json");
             fc.setFileFilter(infil);
@@ -259,7 +260,7 @@ public class AddRules implements ActionListener {
                 }
             }
         }
-        else if (e.getSource() == this.exportButton){
+        else if (e.getSource() == this.exportButton){ //Export Rule(s)
             JFileChooser fc = new JFileChooser();
             int temp = fc.showSaveDialog(null);
             if(temp == JFileChooser.APPROVE_OPTION){
@@ -272,41 +273,41 @@ public class AddRules implements ActionListener {
                 }
             }
         }
-        else if(e.getSource() == this.action){
-            if(this.action.getSelectedIndex() == 0){
+        else if(e.getSource() == this.action){ //Update action options
+            if(this.action.getSelectedIndex() == 0){ //Highlight
                 this.colorSelect.setVisible(true);
                 this.highlightLabel.setVisible(true);
                 this.noteField.setVisible(false);
                 this.noteLabel.setVisible(false);
             }
-            else if (this.action.getSelectedIndex() == 1){
+            else if (this.action.getSelectedIndex() == 1){ //Add note
                 this.colorSelect.setVisible(false);
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(true);
                 this.noteLabel.setVisible(true);
                 this.noteLabel.setText("Note:");
             }
-            else if (this.action.getSelectedIndex() == 2){
+            else if (this.action.getSelectedIndex() == 2){ //Drop req/res
                 this.colorSelect.setVisible(false);
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(false);
                 this.noteLabel.setVisible(false);
             }
-            else if (this.action.getSelectedIndex() == 3){
+            else if (this.action.getSelectedIndex() == 3){ // Add header
                 this.colorSelect.setVisible(false);
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(true);
                 this.noteLabel.setVisible(true);
                 this.noteLabel.setText("Header:");
             }
-            else if (this.action.getSelectedIndex() == 4){
+            else if (this.action.getSelectedIndex() == 4){ // Replace header
                 this.colorSelect.setVisible(false);
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(true);
                 this.noteLabel.setVisible(true);
                 this.noteLabel.setText("Header:");
             }
-            else if (this.action.getSelectedIndex() == 5){
+            else if (this.action.getSelectedIndex() == 5){ // Remove header
                 this.colorSelect.setVisible(false);
                 this.highlightLabel.setVisible(false);
                 this.noteField.setVisible(true);
