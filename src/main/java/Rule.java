@@ -104,6 +104,7 @@ public class Rule {
     public String getCondition() {
         return condition;
     }
+    public int getId(){return this.id;}
     public Boolean getIsRegex(){
         return this.isRegex;
     }
@@ -124,6 +125,7 @@ public class Rule {
     public void setAction(String action) {
         this.action = action;
     }
+    public void setColor(HighlightColor color){this.color = color;}
     public void setCondition(String condition) {
         this.condition = condition;
     }
