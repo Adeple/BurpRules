@@ -22,7 +22,7 @@
 - [X] Persistence
     - [X] Change from CSV to JSON
 - [ ] UI/Functionality
-    - [ ] Duplicate Rule Button
-    - [ ] Edit Rule Button
+    - [X] Duplicate Rule Button
+    - [X] Edit Rule Button
     - [ ] Disable/Enable Rules
     - [X] Switch Location from dropdown to checkboxes

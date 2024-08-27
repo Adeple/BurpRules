@@ -41,6 +41,7 @@ public class AddRules implements ActionListener {
     private JButton saveButton;
     private JButton cancelButton;
     private JButton duplicateButton;
+    private JButton toggleButton;
     private DefaultTableModel model;
     private ProxyHandler ph;
     private int selectedRow;
@@ -59,7 +60,7 @@ public class AddRules implements ActionListener {
         this.noteLabel.setVisible(false);
 
         //Create Table
-        String[] columns = {"ID", "Rule Name", "Location", "Condition", "Query", "Action", "Note/Color/Header"};
+        String[] columns = {"ID", "Enabled","Rule Name", "Location", "Condition", "Query", "Action", "Note/Color/Header"};
         this.model = new DefaultTableModel(columns, 0);
         this.rulesTable.setModel(this.model);
         this.rulesTable.setDefaultEditor(Object.class, null);
@@ -68,12 +69,14 @@ public class AddRules implements ActionListener {
         TableColumnModel tcm = this.rulesTable.getColumnModel();
         tcm.getColumn(0).setMaxWidth(50);
         tcm.getColumn(0).setResizable(false);
-        tcm.getColumn(1).setMaxWidth(1000);
+        tcm.getColumn(1).setMaxWidth(80);
+        tcm.getColumn(1).setResizable(false);
         tcm.getColumn(2).setMaxWidth(1000);
         tcm.getColumn(3).setMaxWidth(1000);
         tcm.getColumn(4).setMaxWidth(1000);
         tcm.getColumn(5).setMaxWidth(1000);
         tcm.getColumn(6).setMaxWidth(1000);
+        tcm.getColumn(7).setMaxWidth(1000);
 
         //Add ActionListeners
         this.addButton.addActionListener(this);
@@ -86,6 +89,7 @@ public class AddRules implements ActionListener {
         this.cancelButton.addActionListener(this);
         this.saveButton.addActionListener(this);
         this.duplicateButton.addActionListener(this);
+        this.toggleButton.addActionListener(this);
 
         restoreDefaults();
 
@@ -123,6 +127,7 @@ public class AddRules implements ActionListener {
         this.clearButton.setVisible(true);
         this.exportButton.setVisible(true);
         this.importButton.setVisible(true);
+        this.toggleButton.setVisible(true);
     }
 
     //Import rules file (JSON)
@@ -150,7 +155,7 @@ public class AddRules implements ActionListener {
                     };
 
                       //Add row in table
-                    this.model.addRow(new Object[]{this.ph.getRuleCount() + 1, r.getString("RuleName"), r.getString("Location"),
+                    this.model.addRow(new Object[]{this.ph.getRuleCount() + 1, "Y", r.getString("RuleName"), r.getString("Location"),
                             r.getString("Condition"), r.getString("Query").replaceAll("\\\\\\\\", "\\\\"), r.getString("Action"),
                             r.getString("Action").equals("Highlight") ? r.getString("Color") : r.getString("Note")});
 
@@ -262,7 +267,7 @@ public class AddRules implements ActionListener {
             detail = r.getNote();
         }
 
-        this.model.addRow(new Object[]{r.getId(), r.getRuleName(), r.getLocation(), r.getCondition(), r.getQuery(), r.getAction(), detail});
+        this.model.addRow(new Object[]{r.getId(), "Y", r.getRuleName(), r.getLocation(), r.getCondition(), r.getQuery(), r.getAction(), detail});
         this.model.fireTableDataChanged();
     }
 
@@ -376,20 +381,21 @@ public class AddRules implements ActionListener {
             this.deleteButton.setVisible(false);
             this.clearButton.setVisible(false);
             this.duplicateButton.setVisible(false);
+            this.toggleButton.setVisible(false);
 
             int row = this.rulesTable.getSelectedRows()[0];
             selectedRow = row;
 
-            this.ruleName.setText((String) this.rulesTable.getValueAt(row, 1));
+            this.ruleName.setText((String) this.rulesTable.getValueAt(row, 2));
 
-            if(((String)this.rulesTable.getValueAt(row, 2)).contains("Request")){
+            if(((String)this.rulesTable.getValueAt(row, 3)).contains("Request")){
                 this.requestCheckBox.setSelected(true);
             }
-            if(((String)this.rulesTable.getValueAt(row, 2)).contains("Response")){
+            if(((String)this.rulesTable.getValueAt(row, 3)).contains("Response")){
                 this.responseCheckBox.setSelected(true);
             }
 
-            switch((String)this.rulesTable.getValueAt(row, 3)) {
+            switch((String)this.rulesTable.getValueAt(row, 4)) {
                 case "Contains":
                     this.condition.setSelectedIndex(0);
                     break;
@@ -407,14 +413,14 @@ public class AddRules implements ActionListener {
                     break;
             }
 
-            this.query.setText((String) this.rulesTable.getValueAt(row, 4));
+            this.query.setText((String) this.rulesTable.getValueAt(row, 5));
 
             this.regexCheckBox.setSelected(this.ph.getRules().get(row).getIsRegex());
 
-            switch((String)this.rulesTable.getValueAt(row, 5)) {
+            switch((String)this.rulesTable.getValueAt(row, 6)) {
                 case "Highlight":
                     this.action.setSelectedIndex(0);
-                    switch((String)this.rulesTable.getValueAt(row, 6)){
+                    switch((String)this.rulesTable.getValueAt(row, 7)){
                         case "Black":
                             this.colorSelect.setSelectedIndex(0);
                             break;
@@ -449,27 +455,30 @@ public class AddRules implements ActionListener {
                     break;
                 case "Add Note":
                     this.action.setSelectedIndex(1);
+                    this.noteField.setText((String)this.rulesTable.getValueAt(row, 7));
                     break;
                 case "Drop Req/Res":
                     this.action.setSelectedIndex(2);
+                    this.noteField.setText((String)this.rulesTable.getValueAt(row, 7));
                     break;
                 case "Add Header":
                     this.action.setSelectedIndex(3);
+                    this.noteField.setText((String)this.rulesTable.getValueAt(row, 7));
                     break;
                 case "Replace Header":
                     this.action.setSelectedIndex(4);
+                    this.noteField.setText((String)this.rulesTable.getValueAt(row, 7));
                     break;
                 case "Remove Header":
                     this.action.setSelectedIndex(5);
+                    this.noteField.setText((String)this.rulesTable.getValueAt(row, 7));
                     break;
                 default:
                     this.action.setSelectedIndex(0);
+                    this.noteField.setText((String)this.rulesTable.getValueAt(row, 7));
                     break;
             }
             updateActionContext();
-
-            this.noteField.setText((String)this.rulesTable.getValueAt(row, 6));
-
         }
         else if(e.getSource() == this.cancelButton){
             restoreDefaults();
@@ -505,12 +514,12 @@ public class AddRules implements ActionListener {
                     location += "Response";
                 }
 
-                this.model.setValueAt(this.ruleName.getText(),selectedRow,1);
-                this.model.setValueAt(location,selectedRow,2);
-                this.model.setValueAt(this.condition.getSelectedItem(),selectedRow,3);
-                this.model.setValueAt(this.query.getText(),selectedRow,4);
-                this.model.setValueAt(this.action.getSelectedItem(),selectedRow,5);
-                this.model.setValueAt(detail,selectedRow,6);
+                this.model.setValueAt(this.ruleName.getText(),selectedRow,2);
+                this.model.setValueAt(location,selectedRow,3);
+                this.model.setValueAt(this.condition.getSelectedItem(),selectedRow,4);
+                this.model.setValueAt(this.query.getText(),selectedRow,5);
+                this.model.setValueAt(this.action.getSelectedItem(),selectedRow,6);
+                this.model.setValueAt(detail,selectedRow,7);
 
                 //Set Highlighter color
                 HighlightColor hc = switch ((String) this.colorSelect.getSelectedItem()) {
@@ -546,6 +555,14 @@ public class AddRules implements ActionListener {
            Rule temp = new Rule(this.ph.getRules().get(row));
            this.ph.addRule(temp);
            addRuleRow(temp);
+        }
+        else if (e.getSource() == this.toggleButton){
+            int[] rows = this.rulesTable.getSelectedRows();
+            for(int i = rows.length-1; i >= 0; i--) {
+                Rule temp = this.ph.getRules().get(rows[i]);
+                temp.setIsEnabled(!temp.getIsEnabled());
+                this.model.setValueAt(temp.getIsEnabled() ? "Y" : "N", rows[i], 1);
+            }
         }
     }
 }

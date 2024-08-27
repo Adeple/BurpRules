@@ -9,7 +9,7 @@ public class Rule {
     private int id;
     private String ruleName, location, condition, query, action, note;
     private HighlightColor color;
-    private Boolean isRegex;
+    private Boolean isRegex, isEnabled;
 
     //Constructor
     public Rule(){
@@ -22,6 +22,7 @@ public class Rule {
         this.color = null;
         this.note = "";
         this.isRegex = false;
+        this.isEnabled = false;
     }
 
     public Rule(String ruleName, String location, String condition, String query, String action, String note, HighlightColor color, Boolean isRegex){
@@ -34,6 +35,7 @@ public class Rule {
         this.color = color;
         this.note = note;
         this.isRegex = isRegex;
+        this.isEnabled = true;
     }
 
     public Rule(Rule r){
@@ -46,6 +48,7 @@ public class Rule {
         this.note = r.getNote();
         this.isRegex = r.getIsRegex();
         this.id = -1;
+        this.isEnabled = true;
     }
 
     public boolean checkRule(InterceptedRequest req){
@@ -120,6 +123,7 @@ public class Rule {
     public String getRuleName() {
         return ruleName;
     }
+    public Boolean getIsEnabled() {return this.isEnabled;}
 
     //Mutators
     public void setAction(String action) {
@@ -147,4 +151,5 @@ public class Rule {
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
     }
+    public void setIsEnabled(Boolean isEnabled){this.isEnabled = isEnabled;}
 }
