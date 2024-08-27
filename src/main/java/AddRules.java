@@ -198,8 +198,7 @@ public class AddRules implements ActionListener {
             write.write("]");
             write.close();
             }
-            catch(IOException noFile){
-                return;
+            catch(IOException ignored){
             }
     }
 
@@ -248,7 +247,7 @@ public class AddRules implements ActionListener {
     }
 
     public void addRuleRow(Rule r){
-        String detail ="";
+        String detail;
         if(Objects.equals(this.action.getSelectedItem(), "Highlight")){
             detail = switch (r.getColor()) {
                 case HighlightColor.RED -> "Red";
@@ -275,23 +274,6 @@ public class AddRules implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == this.addButton) {
-            String detail = "";
-            if(Objects.equals(this.action.getSelectedItem(), "Highlight")){
-                detail = (String) this.colorSelect.getSelectedItem();
-            }
-            else if (((String)this.action.getSelectedItem()).equals("Add Note")){
-                detail = this.noteField.getText();
-            }
-            else if(this.action.getSelectedItem().equals("Add Header")){
-                detail = this.noteField.getText();
-            }
-            else if (this.action.getSelectedItem().equals("Replace Header")){
-                detail = this.noteField.getText();
-            }
-            else if (this.action.getSelectedItem().equals("Remove Header")){
-                detail = this.noteField.getText();
-            }
-
             String location = "";
             if (this.requestCheckBox.isSelected() && this.responseCheckBox.isSelected()){
                     location += "Request & Response";
@@ -303,7 +285,7 @@ public class AddRules implements ActionListener {
             }
 
             //Set Highlighter color
-            HighlightColor hc = switch ((String) this.colorSelect.getSelectedItem()) {
+            HighlightColor hc = switch ((String) Objects.requireNonNull(this.colorSelect.getSelectedItem())) {
                 case "Red" -> HighlightColor.RED;
                 case "Orange" -> HighlightColor.ORANGE;
                 case "Yellow" -> HighlightColor.YELLOW;
@@ -349,8 +331,7 @@ public class AddRules implements ActionListener {
                 try {
                     parseInFile(fc.getSelectedFile());
                 }
-                catch (IOException | JSONException ex){
-                    return;
+                catch (IOException | JSONException ignored){
                 }
             }
         }
@@ -492,16 +473,16 @@ public class AddRules implements ActionListener {
                 if(Objects.equals(this.action.getSelectedItem(), "Highlight")){
                     detail = (String) this.colorSelect.getSelectedItem();
                 }
-                else if (((String)this.action.getSelectedItem()).equals("Add Note")){
+                else if (Objects.equals((String) this.action.getSelectedItem(), "Add Note")){
                     detail = this.noteField.getText();
                 }
-                else if(this.action.getSelectedItem().equals("Add Header")){
+                else if(Objects.equals(this.action.getSelectedItem(), "Add Header")){
                     detail = this.noteField.getText();
                 }
-                else if (this.action.getSelectedItem().equals("Replace Header")){
+                else if (Objects.equals(this.action.getSelectedItem(), "Replace Header")){
                     detail = this.noteField.getText();
                 }
-                else if (this.action.getSelectedItem().equals("Remove Header")){
+                else if (Objects.equals(this.action.getSelectedItem(), "Remove Header")){
                     detail = this.noteField.getText();
                 }
 
@@ -522,7 +503,7 @@ public class AddRules implements ActionListener {
                 this.model.setValueAt(detail,selectedRow,7);
 
                 //Set Highlighter color
-                HighlightColor hc = switch ((String) this.colorSelect.getSelectedItem()) {
+                HighlightColor hc = switch ((String) Objects.requireNonNull(this.colorSelect.getSelectedItem())) {
                     case "Red" -> HighlightColor.RED;
                     case "Orange" -> HighlightColor.ORANGE;
                     case "Yellow" -> HighlightColor.YELLOW;

@@ -24,5 +24,5 @@
 - [ ] UI/Functionality
     - [X] Duplicate Rule Button
     - [X] Edit Rule Button
-    - [ ] Disable/Enable Rules
+    - [X] Disable/Enable Rules
     - [X] Switch Location from dropdown to checkboxes

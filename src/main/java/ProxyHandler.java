@@ -10,12 +10,8 @@ import java.util.ArrayList;
 public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
     private ArrayList<Rule> rules;
     private int ruleCount;
-    private MontoyaApi api;
+    private final MontoyaApi api;
 
-    public ProxyHandler(){
-        this.rules = new ArrayList<>();
-        this.ruleCount = 0;
-    }
     public ProxyHandler(MontoyaApi api){
         this.api = api;
         this.rules = new ArrayList<>();
@@ -49,14 +45,14 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
         HttpRequest hr = (HttpRequest) interceptedRequest;
         for (Rule rule : this.rules) {
             if (rule.getIsEnabled() && rule.getLocation().contains("Request") && rule.checkRule(interceptedRequest)) {
-                if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note"))
+                if (rule.getAction().equals("Highlight") || rule.getAction().equals("Add Note")) {
                     a = rule.annotateRequest(a);
-                else if (rule.getAction().equals("Drop Req/Res")) {
+                } else if (rule.getAction().equals("Drop Req/Res")) {
                     return ProxyRequestReceivedAction.drop();
                 }
                 if (rule.getAction().equals("Add Header")){
                     String n = rule.getNote();
-                    if(n.indexOf(": ") != -1){
+                    if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
                         String headerBody = n.substring(n.indexOf(": ")+2);
                         hr = hr.withAddedHeader(headerName, headerBody);
@@ -64,7 +60,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                 }
                 if (rule.getAction().equals("Replace Header")){
                     String n = rule.getNote();
-                    if(n.indexOf(": ") != -1){
+                    if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
                         String headerBody = n.substring(n.indexOf(": ")+2);
                         hr = hr.withHeader(headerName, headerBody);
@@ -94,7 +90,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                 }
                 if (rule.getAction().equals("Add Header")){
                     String n = rule.getNote();
-                    if(n.indexOf(": ") != -1){
+                    if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
                         String headerBody = n.substring(n.indexOf(": ")+2);
                         hr = hr.withAddedHeader(headerName, headerBody);
@@ -102,7 +98,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                 }
                 if (rule.getAction().equals("Replace Header")){
                     String n = rule.getNote();
-                    if(n.indexOf(": ") != -1){
+                    if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
                         String headerBody = n.substring(n.indexOf(": ")+2);
                         hr = hr.withUpdatedHeader(headerName, headerBody);
