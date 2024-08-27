@@ -80,7 +80,7 @@ public class Rule {
             a = a.withHighlightColor(this.color);
         }
         else if(this.action.equals("Add Note")){
-            a = a.withNotes(this.note);
+            a = a.notes().equals("") ? a.withNotes(this.note) : a.withNotes(a.notes() + " | " + this.note);
         }
         return a;
     }
@@ -89,7 +89,7 @@ public class Rule {
             a = a.withHighlightColor(this.color);
         }
         else if(this.action.equals("Add Note")){
-            a = a.withNotes(this.note);
+            a = a.notes().equals("") ? a.withNotes(this.note) : a.withNotes(a.notes() + " | " + this.note);
         }
         return a;
     }
