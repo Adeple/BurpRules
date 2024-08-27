@@ -40,6 +40,7 @@ public class AddRules implements ActionListener {
     private JButton editButton;
     private JButton saveButton;
     private JButton cancelButton;
+    private JButton duplicateButton;
     private DefaultTableModel model;
     private ProxyHandler ph;
     private int selectedRow;
@@ -84,6 +85,7 @@ public class AddRules implements ActionListener {
         this.editButton.addActionListener(this);
         this.cancelButton.addActionListener(this);
         this.saveButton.addActionListener(this);
+        this.duplicateButton.addActionListener(this);
 
         restoreDefaults();
 
@@ -97,7 +99,6 @@ public class AddRules implements ActionListener {
     //Restore default UI
     public void restoreDefaults(){
         this.ruleName.setText("");
-//      this.location.setSelectedIndex(0);
         this.requestCheckBox.setSelected(false);
         this.responseCheckBox.setSelected(false);
         this.condition.setSelectedIndex(0);
@@ -114,6 +115,7 @@ public class AddRules implements ActionListener {
 
         //Buttons
         this.addButton.setVisible(true);
+        this.duplicateButton.setVisible(true);
         this.editButton.setVisible(true);
         this.saveButton.setVisible(false);
         this.cancelButton.setVisible(false);
@@ -196,6 +198,7 @@ public class AddRules implements ActionListener {
             }
     }
 
+    //Updates UI based on chosen action
     public void updateActionContext(){
         if(this.action.getSelectedIndex() == 0){ //Highlight
             this.colorSelect.setVisible(true);
@@ -239,6 +242,30 @@ public class AddRules implements ActionListener {
         }
     }
 
+    public void addRuleRow(Rule r){
+        String detail ="";
+        if(Objects.equals(this.action.getSelectedItem(), "Highlight")){
+            detail = switch (r.getColor()) {
+                case HighlightColor.RED -> "Red";
+                case HighlightColor.ORANGE -> "Orange";
+                case HighlightColor.YELLOW -> "Yellow";
+                case HighlightColor.GREEN -> "Green";
+                case HighlightColor.CYAN -> "Cyan";
+                case HighlightColor.BLUE -> "Blue";
+                case HighlightColor.PINK -> "Pink";
+                case HighlightColor.MAGENTA -> "Magenta";
+                case HighlightColor.GRAY -> "Gray";
+                default -> "";
+            };
+        }
+        else {
+            detail = r.getNote();
+        }
+
+        this.model.addRow(new Object[]{r.getId(), r.getRuleName(), r.getLocation(), r.getCondition(), r.getQuery(), r.getAction(), detail});
+        this.model.fireTableDataChanged();
+    }
+
     //ActionListeners
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -265,12 +292,10 @@ public class AddRules implements ActionListener {
                     location += "Request & Response";
             } else if (this.requestCheckBox.isSelected()) {
                 location += "Request";
-            } else if (this.responseCheckBox.isSelected()){
+            }
+            else if (this.responseCheckBox.isSelected()){
                 location += "Response";
             }
-
-            this.model.addRow(new Object[]{this.ph.getRuleCount()+1, this.ruleName.getText(), location, this.condition.getSelectedItem(),
-                    this.query.getText(), this.action.getSelectedItem(), detail});
 
             //Set Highlighter color
             HighlightColor hc = switch ((String) this.colorSelect.getSelectedItem()) {
@@ -288,9 +313,10 @@ public class AddRules implements ActionListener {
 
             String note = this.noteField.getText();
 
-            this.ph.addRule(new Rule(this.ruleName.getText(), location, (String) this.condition.getSelectedItem(),
-                    this.query.getText(), (String) this.action.getSelectedItem(), note, hc, this.regexCheckBox.isSelected()));
-            this.model.fireTableDataChanged();
+            Rule temp = new Rule(this.ruleName.getText(), location, (String) this.condition.getSelectedItem(),
+                    this.query.getText(), (String) this.action.getSelectedItem(), note, hc, this.regexCheckBox.isSelected());
+            this.ph.addRule(temp);
+            addRuleRow(temp);
             restoreDefaults();
         }
         else if (e.getSource() == this.clearButton){ //Clear rules
@@ -349,8 +375,7 @@ public class AddRules implements ActionListener {
             this.editButton.setVisible(false);
             this.deleteButton.setVisible(false);
             this.clearButton.setVisible(false);
-            this.exportButton.setVisible(false);
-            this.importButton.setVisible(false);
+            this.duplicateButton.setVisible(false);
 
             int row = this.rulesTable.getSelectedRows()[0];
             selectedRow = row;
@@ -515,6 +540,12 @@ public class AddRules implements ActionListener {
                 this.model.fireTableDataChanged();
             }
             restoreDefaults();
+        }
+        else if (e.getSource() == this.duplicateButton){
+           int row = this.rulesTable.getSelectedRows()[0];
+           Rule temp = new Rule(this.ph.getRules().get(row));
+           this.ph.addRule(temp);
+           addRuleRow(temp);
         }
     }
 }

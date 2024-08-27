@@ -36,7 +36,7 @@ public class Rule {
         this.isRegex = isRegex;
     }
 
-    public Rule(Rule r, int id){
+    public Rule(Rule r){
         this.ruleName = r.getRuleName();
         this.location = r.getLocation();
         this.condition = r.getCondition();
@@ -45,7 +45,7 @@ public class Rule {
         this.color = r.getColor();
         this.note = r.getNote();
         this.isRegex = r.getIsRegex();
-        this.id = id;
+        this.id = -1;
     }
 
     public boolean checkRule(InterceptedRequest req){
