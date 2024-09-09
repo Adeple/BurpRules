@@ -83,7 +83,7 @@ public class Rule {
             a = a.withHighlightColor(this.color);
         }
         else if(this.action.equals("Add Note")){
-            a = a.notes().isEmpty() ? a.withNotes(this.note) : a.withNotes(a.notes() + " | " + this.note);
+            a = a.hasNotes() ? a.withNotes(this.note) : a.withNotes(a.notes() + " | " + this.note);
         }
         return a;
     }
@@ -124,6 +124,12 @@ public class Rule {
         return ruleName;
     }
     public Boolean getIsEnabled() {return this.isEnabled;}
+    public String getFind(){
+        return this.note.substring(0, this.note.indexOf('|'));
+    }
+    public String getReplace(){
+        return this.note.substring(this.note.indexOf('|')+1);
+    }
 
     //Mutators
     public void setAction(String action) {

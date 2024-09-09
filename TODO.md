@@ -26,3 +26,5 @@
     - [X] Edit Rule Button
     - [X] Disable/Enable Rules
     - [X] Switch Location from dropdown to checkboxes
+    - [ ] Reorder rules
+    - [ ] Grep Note (when using RegEx)

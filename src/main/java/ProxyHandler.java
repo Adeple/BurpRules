@@ -4,6 +4,11 @@ import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.logging.Logging;
 import burp.api.montoya.proxy.http.*;
 import burp.api.montoya.http.message.requests.HttpRequest;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 
@@ -50,7 +55,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                 } else if (rule.getAction().equals("Drop Req/Res")) {
                     return ProxyRequestReceivedAction.drop();
                 }
-                if (rule.getAction().equals("Add Header")){
+                else if (rule.getAction().equals("Add Header")){
                     String n = rule.getNote();
                     if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
@@ -58,7 +63,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                         hr = hr.withAddedHeader(headerName, headerBody);
                     }
                 }
-                if (rule.getAction().equals("Replace Header")){
+                else if (rule.getAction().equals("Replace Header")){
                     String n = rule.getNote();
                     if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
@@ -66,9 +71,12 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                         hr = hr.withHeader(headerName, headerBody);
                     }
                 }
-                if (rule.getAction().equals("Remove Header")){
+                else if (rule.getAction().equals("Remove Header")){
                     hr = hr.withRemovedHeader(rule.getNote());
                 }
+                else if(rule.getAction().equals("Find & Replace")){
+                    hr = hr.withBody(URLEncoder.encode(URLDecoder.decode(hr.bodyToString(), StandardCharsets.UTF_8).replace(rule.getFind(), rule.getReplace()), StandardCharsets.UTF_8)
+                            .replace("%3D", "=").replace("%26", "&"));                }
             }
         }
         return ProxyRequestReceivedAction.continueWith(hr, a);
@@ -88,7 +96,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                 else if (rule.getAction().equals("Drop Req/Res")) {
                     return ProxyResponseReceivedAction.drop();
                 }
-                if (rule.getAction().equals("Add Header")){
+                else if (rule.getAction().equals("Add Header")){
                     String n = rule.getNote();
                     if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
@@ -96,7 +104,7 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                         hr = hr.withAddedHeader(headerName, headerBody);
                     }
                 }
-                if (rule.getAction().equals("Replace Header")){
+                else if (rule.getAction().equals("Replace Header")){
                     String n = rule.getNote();
                     if(n.contains(": ")){
                         String headerName = n.substring(0, n.indexOf(": "));
@@ -104,9 +112,14 @@ public class ProxyHandler implements ProxyRequestHandler, ProxyResponseHandler {
                         hr = hr.withUpdatedHeader(headerName, headerBody);
                     }
                 }
-                if (rule.getAction().equals("Remove Header")){
+                else if (rule.getAction().equals("Remove Header")){
                     hr = hr.withRemovedHeader(rule.getNote());
                 }
+                else if(rule.getAction().equals("Find & Replace")){
+                    hr = hr.withBody(URLEncoder.encode(URLDecoder.decode(hr.bodyToString(), StandardCharsets.UTF_8).replace(rule.getFind(), rule.getReplace()), StandardCharsets.UTF_8)
+                            .replace("%3D", "=").replace("%26", "&"));
+                }
+
             }
         }
         return ProxyResponseReceivedAction.continueWith(hr, a);
